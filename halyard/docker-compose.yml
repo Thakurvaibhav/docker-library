@@ -1,0 +1,11 @@
+version: "3"
+services:
+
+  halyard:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: vaibhavthakur/halyard:latest
+    entrypoint: /entrypoint.sh
+    container_name: halyard
+
