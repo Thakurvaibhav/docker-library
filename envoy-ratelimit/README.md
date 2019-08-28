@@ -85,7 +85,8 @@ Commercial support is available at
 
 1. All the applicable actions for a particular path in a cluster are aggregated for the result. ( Logical `OR` of the limits)
 2. We choose to enable/disable global vhost limits using `include_vh_rate_limits: true` flag. 
-3. **Scenario 1**:  
+3. After doing `docker-compose up` , in seperate terminal window run the following the scenarios:
+4. **Scenario 1**:  
     **Case**: `GET` request on `/nginx_1/` at 100 requests per second     
     **Expected Result**: 10% requests successful. ( Logical `OR` of `"descriptor_value": "global"` , `"descriptor_value": "local"`  and `"descriptor_value": "get"` )   
     **Command**: `echo "GET http://localhost:10000/nginx_1/" | vegeta attack -rate=100 -duration=0 | vegeta report`  
@@ -102,7 +103,7 @@ Commercial support is available at
     Error Set:                               429 Too Many Requests
 
     ```
-4. **Scenario 2**:   
+5. **Scenario 2**:   
     **Case**:`POST` request on `/nginx_1/` at 100 requests per second.  
    **Expected Result**: 50% requests successful. ( Logical `OR` of `"descriptor_value": "global"` and `"descriptor_value": "local"` )  
    **Command**: `echo "POST http://localhost:10000/nginx_1/" | vegeta attack -rate=100 -duration=0 | vegeta report`  
@@ -119,7 +120,7 @@ Commercial support is available at
     Error Set:                               429 Too Many Requests
 
    ```
-5. **Scenario 3**:  
+6. **Scenario 3**:  
    **Case**: `GET` request on `/nginx_2/` at 100 requests per second with `X-MyHeader: 123`  
    **Expected Result**: 5% requests successful ( Logical `OR` of `"descriptor_value": "global"`, `"descriptor_value": "local"`, `"descriptor_value": "123"`, and `"descriptor_value": "path"`)  
    **Command**: `echo "GET http://localhost:10000/nginx_2/" | vegeta attack -rate=100 -duration=0 -header "X-MyHeader: 123" | vegeta report`  
@@ -135,7 +136,7 @@ Commercial support is available at
     Status Codes  [code:count]               200:200  429:3661  
     Error Set:                               429 Too Many Requests  
    ```
-6. **Scenario 4**:
+7. **Scenario 4**:  
    **Case**: `POST` request on `/nginx_2/` at 100 requests per second with `X-MyHeader: 456`  
    **Expected Result**: 5% requests successful ( Logical `OR` of `"descriptor_value": "global"`, `"descriptor_value": "local"`, `"descriptor_value": "post"`, `"descriptor_value": "456"`, and `"descriptor_value": "path"`)  
    **Command**: `echo "POST http://localhost:10000/nginx_2/" | vegeta attack -rate=100 -duration=0 -header "X-MyHeader: 456" | vegeta report`  
