@@ -85,11 +85,11 @@ Commercial support is available at
 
 1. All the applicable actions for a particular path in a cluster are aggregated for the result. ( Logical `OR` of the limits)
 2. We choose to enable/disable global vhost limits using `include_vh_rate_limits: true` flag. 
-3. Scenario 1:\ 
-    Case: `GET` request on `/nginx_1/` at 100 requests per second.\ 
-    Expected Result: 10% requests successful. ( Logical `OR` of `"descriptor_value": "global"` , `"descriptor_value": "local"`  and `"descriptor_value": "get"` )\
-    Command: `echo "GET http://localhost:10000/nginx_1/" | vegeta attack -rate=100 -duration=0 | vegeta report`\
-    Actual Result\
+3. Scenario 1:  
+    Case: `GET` request on `/nginx_1/` at 100 requests per second     
+    Expected Result: 10% requests successful. ( Logical `OR` of `"descriptor_value": "global"` , `"descriptor_value": "local"`  and `"descriptor_value": "get"` )   
+    Command: `echo "GET http://localhost:10000/nginx_1/" | vegeta attack -rate=100 -duration=0 | vegeta report`  
+    Actual Result  
     ```
     $ echo "GET http://localhost:10000/nginx_1/" | vegeta attack -rate=100 -duration=0 | vegeta report
     Requests      [total, rate, throughput]  1008, 100.12, 10.92
