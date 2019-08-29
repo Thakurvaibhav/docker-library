@@ -20,12 +20,8 @@ static_resources:
               rate_limits:
                 - stage: 0
                   actions:
-                    - {
-                        generic_key: 
-                        { 
-                          "descriptor_value": "global"
-                        }
-                      }
+                    - generic_key: 
+                        descriptor_value: "global"
               routes:
               - match:
                   prefix: "/nginx_1"
@@ -34,40 +30,21 @@ static_resources:
                   include_vh_rate_limits: true
                   rate_limits:
                     - actions:
-                        - {
-                            generic_key: 
-                            { 
-                              "descriptor_value": "local"
-                            }
-                          }
+                        - generic_key:
+                            descriptor_value: "local"
                     - actions:
-                        - { 
-                          header_value_match:
-                            {
-                              "descriptor_value": "get",
-                              "headers": [
-                                {
-                                  "name": ":method",
-                                  "exact_match": "GET"
-                                }
-                              ]
-                            }
-                          } 
+                        - header_value_match:
+                            descriptor_value: "get"
+                            headers: 
+                              - name: ":method"
+                                prefix_match: "GET" 
                     - actions:  #This will be triggered if `X-CustomHeader` is present AND the X-CustomPlan header has a value of either BASIC or PLUS
-                      - {
-                        requestHeaders:
-                          {
-                            "descriptor_key": "custom_header",
-                            "header_name": "X-CustomHeader"
-                          }
-                        }
-                      - {
-                        requestHeaders:
-                          {
-                            "descriptor_key": "plan",
-                            "header_name": "X-CustomPlan" 
-                          }
-                        }                                                                                    
+                      - requestHeaders:
+                          descriptor_key: "custom_header"
+                          header_name: "X-CustomHeader"
+                      - requestHeaders:
+                          descriptor_key: "plan"
+                          header_name: "X-CustomPlan"                                                                                    
               - match:
                   prefix: "/nginx_2"
                 route:
@@ -75,64 +52,32 @@ static_resources:
                   include_vh_rate_limits: true
                   rate_limits:  
                     - actions:
-                        - {
-                            generic_key: 
-                            { 
-                              "descriptor_value": "local"
-                            }
-                          }
+                        - generic_key:
+                            descriptor_value: "local"
                     - actions:
-                        - { 
-                          header_value_match:
-                            {
-                              "descriptor_value": "123",
-                              "headers": [
-                                {
-                                  "name": "X-MyHeader",
-                                  "exact_match": "123"
-                                }
-                              ]
-                            }
-                          }
+                        - header_value_match:
+                            descriptor_value: "123"
+                            headers: 
+                              - name: "X-MyHeader"
+                                prefix_match: "123"
                     - actions:
-                        - { 
-                          header_value_match:
-                            {
-                              "descriptor_value": "456",
-                              "headers": [
-                                {
-                                  "name": "X-MyHeader",
-                                  "exact_match": "456"
-                                }
-                              ]
-                            }
-                          }
+                        - header_value_match:
+                            descriptor_value: "456"
+                            headers: 
+                              - name: "X-MyHeader"
+                                prefix_match: "456"
                     - actions:
-                        - { 
-                          header_value_match:
-                            {
-                              "descriptor_value": "post",
-                              "headers": [
-                                {
-                                  "name": ":method",
-                                  "exact_match": "POST"
-                                }
-                              ]
-                            }
-                          }
+                        - header_value_match:
+                            descriptor_value: "post"
+                            headers: 
+                              - name: ":method"
+                                prefix_match: "POST"
                     - actions:
-                        - { 
-                          header_value_match:
-                            {
-                              "descriptor_value": "path",
-                              "headers": [
-                                {
-                                  "name": ":path",
-                                  "prefix_match": "/nginx"
-                                }
-                              ]
-                            }
-                          }
+                        - header_value_match:
+                            descriptor_value: "path"
+                            headers: 
+                              - name: ":path"
+                                prefix_match: "/nginx"
           http_filters:
           - name: envoy.rate_limit
             config:
