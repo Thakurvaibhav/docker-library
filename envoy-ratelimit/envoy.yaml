@@ -52,7 +52,22 @@ static_resources:
                                 }
                               ]
                             }
-                          }                                                                                        
+                          } 
+                    - actions:  #This will be triggered if `X-CustomHeader` is present AND the X-CustomPlan header has a value of either BASIC or PLUS
+                      - {
+                        requestHeaders:
+                          {
+                            "descriptor_key": "custom_header",
+                            "header_name": "X-CustomHeader"
+                          }
+                        }
+                      - {
+                        requestHeaders:
+                          {
+                            "descriptor_key": "plan",
+                            "header_name": "X-CustomPlan" 
+                          }
+                        }                                                                                    
               - match:
                   prefix: "/nginx_2"
                 route:

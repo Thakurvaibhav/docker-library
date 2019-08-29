@@ -153,3 +153,37 @@ Commercial support is available at
           Error Set:                               429 Too Many Requests
 
          ```
+    5. **Scenario 5**:  
+         **Case**: `GET` request on `/nginx_1/` at 100 requests per second with `X-CustomHeader: XYZ` and `X-CustomPlan: PLUS`  
+         **Expected Result**: 3% requests successful ( Logical `OR` of `"descriptor_value": "global"`, `"descriptor_value": "local"`, `"descriptor_value": "get"`, `"descriptor_key": "custom_header"`, and `"descriptor_key": "plan"`)  
+         **Command**: `echo "GET http://localhost:10000/nginx_1/" | vegeta attack -rate=100 -duration=0 -header "X-CustomHeader: XYZ" -header  "X-CustomPlan: PLUS" | vegeta report`  
+         **ACtual Result**:  
+         ```
+          $ echo "GET http://localhost:10000/nginx_1/" | vegeta attack -rate=100 -duration=0 -header "X-CustomHeader: XYZ" -header  "X-CustomPlan: PLUS" | vegeta report  
+          Requests      [total, rate, throughput]  2372, 100.05, 3.16
+          Duration      [total, attack, wait]      23.71156424s, 23.707710415s, 3.853825ms
+          Latencies     [mean, 50, 95, 99, max]    5.396743ms, 5.179951ms, 7.981171ms, 10.084753ms, 15.086778ms
+          Bytes In      [total, mean]              46800, 19.73
+          Bytes Out     [total, mean]              0, 0.00
+          Success       [ratio]                    3.16%
+          Status Codes  [code:count]               200:75  429:2297  
+          Error Set:                               429 Too Many Requests
+
+         ```
+
+    6. **Scenario 6**:  
+         **Case**: `GET` request on `/nginx_1/` at 100 requests per second with `X-Header: XYZ` and `X-CustomPlan: PLUS`  
+         **Expected Result**: 10% requests successful ( Logical `OR` of `"descriptor_value": "global"`, `"descriptor_value": "local"`, `"descriptor_value": "get"`)  
+         **Command**: `echo "GET http://localhost:10000/nginx_1/" | vegeta attack -rate=100 -duration=0 -header "X-Header: XYZ" -header "X-CustomPlan: PLUS" | vegeta report`  
+         **ACtual Result**:  
+         ```
+          $ echo "GET http://localhost:10000/nginx_1/" | vegeta attack -rate=100 -duration=0 -header "X-Header: XYZ" -header "X-CustomPlan: PLUS" | vegeta report
+          Requests      [total, rate, throughput]  1578, 100.07, 10.78
+          Duration      [total, attack, wait]      15.773500478s, 15.769158977s, 4.341501ms
+          Latencies     [mean, 50, 95, 99, max]    4.748516ms, 4.514902ms, 7.076671ms, 8.518779ms, 16.077828ms
+          Bytes In      [total, mean]              106080, 67.22
+          Bytes Out     [total, mean]              0, 0.00
+          Success       [ratio]                    10.77%
+          Status Codes  [code:count]               200:170  429:1408  
+          Error Set:                               429 Too Many Requests
+         ```

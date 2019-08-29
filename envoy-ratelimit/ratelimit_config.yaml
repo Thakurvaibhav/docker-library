@@ -1,6 +1,5 @@
 domain: apis
 descriptors:
-
   - key: generic_key
     value: global
     rate_limit:
@@ -36,3 +35,16 @@ descriptors:
     rate_limit:
       unit: second 
       requests_per_unit: 5
+#Using nested descriptors
+  - key: custom_header
+    descriptors:
+    - key: plan
+      value: BASIC
+      rate_limit:
+        requests_per_unit: 2
+        unit: second
+    - key: plan
+      value: PLUS
+      rate_limit:
+        requests_per_unit: 3
+        unit: second
