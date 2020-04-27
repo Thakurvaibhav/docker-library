@@ -10,14 +10,10 @@ RUN apt-get update && \
 	rm -rf /var/lib/apt/lists/*
 
 #Install kubectl 
-RUN	curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add - && \
-	echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list && \
-	apt-get update && \
-	apt-get install -y kubectl && \
-	rm -rf /var/lib/apt/lists/*
+RUN curl -sSL https://storage.googleapis.com/kubernetes-release/release/v1.16.8/bin/linux/amd64/kubectl -o /usr/local/bin/kubectl && chmod +x /usr/local/bin/kubectl
 
 #Install halyard
-RUN curl -O https://quid.jfrog.io/quid/http-quid/public/halyard/InstallHalyard.sh && \
+RUN curl -O https://raw.githubusercontent.com/spinnaker/halyard/master/install/debian/InstallHalyard.sh && \
     bash InstallHalyard.sh --user spinnaker
 
 RUN chown -R spinnaker:spinnaker /home/spinnaker/
