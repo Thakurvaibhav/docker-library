@@ -13,6 +13,9 @@ echo "####### HAL IS RUNNING ############"
 echo "Starting hal backup"
 cd /root
 sudo -u spinnaker hal backup create --daemon-endpoint http://halyard:8064
+PATH=${AWS_BCUKET}/hal_backup
+KEY=`ls -t *.tar | head -1`
+aws s3 cp ${KEY} ${PATH}
 
 #Delete backup older than 2 days
 find . -type f -mtime +2 -name '*.tar' -execdir rm -- '{}' \;
