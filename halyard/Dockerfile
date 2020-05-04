@@ -1,27 +1,28 @@
-FROM ubuntu:14.04
+FROM gcr.io/spinnaker-marketplace/halyard:stable
 
 USER root 
-RUN useradd -ms /bin/bash spinnaker
+WORKDIR /
 
 #Install awscli
-RUN apt-get update && \
-	apt-get install -y python python-pip curl apt-transport-https ca-certificates software-properties-common && \
-	pip install --default-timeout=100 awscli && \
-	rm -rf /var/lib/apt/lists/*
+RUN echo "**** install Python ****" && \
+    apk add --no-cache python3 && \
+    if [ ! -e /usr/bin/python ]; then ln -sf python3 /usr/bin/python ; fi && \
+    \
+    echo "**** install pip ****" && \
+    python3 -m ensurepip && \
+    rm -r /usr/lib/python*/ensurepip && \
+    pip3 install --no-cache --upgrade pip setuptools wheel awscli && \
+    if [ ! -e /usr/bin/pip ]; then ln -s pip3 /usr/bin/pip ; fi
 
-#Install kubectl 
-RUN curl -sSL https://storage.googleapis.com/kubernetes-release/release/v1.16.8/bin/linux/amd64/kubectl -o /usr/local/bin/kubectl && chmod +x /usr/local/bin/kubectl
-
-#Install halyard
-RUN curl -O https://raw.githubusercontent.com/spinnaker/halyard/master/install/debian/InstallHalyard.sh && \
-    bash InstallHalyard.sh --user spinnaker
-
-RUN chown -R spinnaker:spinnaker /home/spinnaker/
+#Install gcloud
+ENV PATH /google-cloud-sdk/bin:$PATH
+RUN wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-290.0.0-linux-x86_64.tar.gz && \
+	tar -xvf google-cloud-sdk-290.0.0-linux-x86_64.tar.gz && \
+	gcloud config set core/disable_usage_reporting true && \
+    gcloud config set component_manager/disable_update_check true && \
+    gcloud config set metrics/environment github_docker_image && \
+    gcloud --version
 
 COPY backup.sh /backup.sh
 
-RUN chmod 755 /backup.sh
-
 COPY entrypoint.sh /entrypoint.sh
-
-RUN chmod 755 /entrypoint.sh
