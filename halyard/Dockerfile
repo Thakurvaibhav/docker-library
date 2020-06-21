@@ -4,11 +4,8 @@ USER root
 WORKDIR /
 
 #Install awscli
-RUN echo "**** install Python ****" && \
-    apk add --no-cache python3 && \
+RUN apk add --no-cache python3 && \
     if [ ! -e /usr/bin/python ]; then ln -sf python3 /usr/bin/python ; fi && \
-    \
-    echo "**** install pip ****" && \
     python3 -m ensurepip && \
     rm -r /usr/lib/python*/ensurepip && \
     pip3 install --no-cache --upgrade pip setuptools wheel awscli && \
@@ -26,3 +23,5 @@ RUN wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud
 COPY backup.sh /backup.sh
 
 COPY entrypoint.sh /entrypoint.sh
+
+USER spinnaker
