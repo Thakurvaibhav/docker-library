@@ -5,6 +5,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: vaibhavthakur/halyard:latest
+    image: vaibhavthakur/halyard:v0.2
     entrypoint: /entrypoint.sh
     container_name: halyard
