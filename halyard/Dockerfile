@@ -24,4 +24,7 @@ COPY backup.sh /backup.sh
 
 COPY entrypoint.sh /entrypoint.sh
 
-USER spinnaker
+RUN deluser spinnaker && \
+    adduser -h /home/spinnaker -s /bin/bash spinnaker --disabled-password
+
+WORKDIR /home/spinnaker

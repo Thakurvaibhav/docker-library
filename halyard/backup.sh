@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/bash
 set -e
 
 /opt/halyard/bin/halyard &
@@ -13,9 +13,9 @@ echo "####### HAL IS RUNNING ############"
 echo "Starting hal backup"
 cd /root
 hal backup create --daemon-endpoint http://halyard:8064
-PATH=${AWS_BCUKET}/hal_backup
+S3PATH=s3://${AWS_BUCKET}/hal_backup/
 KEY=`ls -t *.tar | head -1`
-aws s3 cp ${KEY} ${PATH}
+aws s3 cp ${KEY} ${S3PATH}
 
 #Delete backup older than 2 days
-find . -type f -mtime +2 -name '*.tar' -execdir rm -- '{}' \;
+find . -type f -mtime +2 -name '*.tar' -exec rm -- '{}' \;
