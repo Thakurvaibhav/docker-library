@@ -20,15 +20,12 @@ RUN wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud
     gcloud config set metrics/environment github_docker_image && \
     gcloud --version
 
+
 COPY backup.sh /backup.sh
 
 COPY entrypoint.sh /entrypoint.sh
 
-RUN deluser spinnaker && \
-    adduser -h /home/spinnaker \
-    -s /bin/bash spinnaker \
-    --disabled-password
-
 RUN chown -R spinnaker:spinnaker /home/spinnaker
 
 WORKDIR /home/spinnaker
+USER spinnaker
