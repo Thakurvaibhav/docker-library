@@ -1,0 +1,128 @@
+static_resources:
+  listeners:
+  - name: listener_0
+    address:
+      socket_address:        
+        address: 0.0.0.0
+        port_value: 10000
+    filter_chains:
+    - filters:
+      - name: envoy.http_connection_manager
+        config:
+          stat_prefix: ingress_http
+          codec_type: AUTO
+          route_config:
+            name: local_route
+            virtual_hosts:
+            - name: nginx
+              domains:
+              - "*"
+              rate_limits:
+                - stage: 0
+                  actions:
+                    - generic_key: 
+                        descriptor_value: "global"
+              routes:
+              - match:
+                  prefix: "/nginx_1"
+                route:
+                  cluster: nginx_1
+                  include_vh_rate_limits: true
+                  rate_limits:
+                    - actions:
+                        - generic_key:
+                            descriptor_value: "local"
+                    - actions:
+                        - header_value_match:
+                            descriptor_value: "get"
+                            headers: 
+                              - name: ":method"
+                                prefix_match: "GET" 
+                    - actions:  #This will be triggered if `X-CustomHeader` is present AND the X-CustomPlan header has a value of either BASIC or PLUS
+                      - requestHeaders:
+                          descriptor_key: "custom_header"
+                          header_name: "X-CustomHeader"
+                      - requestHeaders:
+                          descriptor_key: "plan"
+                          header_name: "X-CustomPlan"                                                                                    
+              - match:
+                  prefix: "/nginx_2"
+                route:
+                  cluster: nginx_2
+                  include_vh_rate_limits: true
+                  rate_limits:  
+                    - actions:
+                        - generic_key:
+                            descriptor_value: "local"
+                    - actions:
+                        - header_value_match:
+                            descriptor_value: "123"
+                            headers: 
+                              - name: "X-MyHeader"
+                                prefix_match: "123"
+                    - actions:
+                        - header_value_match:
+                            descriptor_value: "456"
+                            headers: 
+                              - name: "X-MyHeader"
+                                prefix_match: "456"
+                    - actions:
+                        - header_value_match:
+                            descriptor_value: "post"
+                            headers: 
+                              - name: ":method"
+                                prefix_match: "POST"
+                    - actions:
+                        - header_value_match:
+                            descriptor_value: "path"
+                            headers: 
+                              - name: ":path"
+                                prefix_match: "/nginx"
+          http_filters:
+          - name: envoy.rate_limit
+            config:
+              domain: apis
+              failure_mode_deny: false
+              rate_limit_service:
+                grpc_service:
+                  envoy_grpc:
+                    cluster_name: rate_limit_cluster
+                  timeout: 0.25s
+
+          - name: envoy.router
+
+  clusters:
+  - name: nginx_1
+    connect_timeout: 1s
+    type: strict_dns
+    lb_policy: round_robin
+    hosts:
+    - socket_address:
+        address: nginx1
+        port_value: 80
+
+  - name: nginx_2
+    connect_timeout: 1s
+    type: strict_dns
+    lb_policy: round_robin
+    hosts:
+    - socket_address:
+        address: nginx2
+        port_value: 80
+
+  - name: rate_limit_cluster
+    type: strict_dns
+    connect_timeout: 0.25s
+    lb_policy: round_robin
+    http2_protocol_options: {}
+    hosts:
+    - socket_address:
+        address: ratelimit
+        port_value: 8081
+
+admin:
+  access_log_path: "/dev/null"
+  address:
+    socket_address:
+      address: 0.0.0.0
+      port_value: 9901
